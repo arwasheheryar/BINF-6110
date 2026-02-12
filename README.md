@@ -118,7 +118,62 @@ The complete analytical workflow was executed using command-line tools within a 
 
 Computational resources included an Ubuntu 22.04 virtual machine allocated 8 GB RAM and multiple CPU threads (up to 8 threads used for assembly and alignment). Total runtime for the complete workflow, including assembly and polishing, was under one hour, with assembly and polishing accounting for the majority of computational time.
 
-## Results
+# Results and Discussion
+
+## Assembly Quality and Performance Metrics
+
+The *Salmonella enterica* genome assembly achieved exceptional quality across all major performance indicators (Figure 1). The total assembly length of 5.10 Mb slightly exceeded the 4.95 Mb reference genome, indicating successful capture of strain-specific genomic content. The N50 of 3.32 Mb substantially surpassed the >1 Mb benchmark for high-quality bacterial assemblies, demonstrating excellent contiguity that approaches chromosome-level assembly.
+
+![Figure 1: Assembly Quality Comparison](./main/A1/Figures/fig1.png)
+*Figure 1. Assembly quality metrics comparison showing observed values versus expected benchmarks. The assembly exceeded expectations in coverage depth (159× vs 50× expected) and achieved excellent contiguity (N50 = 3.32 Mb), while maintaining appropriate genome length and contig number.*
+
+The mean coverage of 159× far exceeded the 50× expected threshold, providing robust support for accurate consensus calling and reliable variant detection. The presence of three contigs aligns with expectations for bacterial genomes, likely representing the main chromosome plus accessory genetic elements such as plasmids or genomic islands.
+
+## Genomic Alignment and Variant Distribution
+
+Visual inspection of the genome alignment revealed comprehensive coverage across the *Salmonella* reference chromosome with variants distributed throughout the genome (Figure 2). The alignment achieved a 96% mapping rate, indicating high structural similarity between the assembled strain and the LT2 reference genome.
+
+![Figure 2: Genome-wide Alignment Overview](./main/A1/Figures/fig2.png)
+*Figure 2. IGV visualization showing genome-wide alignment of the assembled contigs (bottom track) against the reference genome, with variant positions (blue bars, top track) and coverage depth (middle track, cyan). Variants are distributed across the entire chromosome length.*
+
+Variant calling identified 1,058 single nucleotide variants (SNVs) with no insertion-deletion variants detected, representing a sequence divergence of approximately 0.021% from the reference strain. This level of variation is consistent with intra-serovar differences within *Salmonella enterica* and suggests these strains share recent evolutionary history while having accumulated strain-specific mutations.
+
+## Regional Variant Patterns and Clustering
+
+Detailed examination of variant distribution revealed both isolated SNVs and regional clusters containing multiple variants within short genomic intervals (Figure 3). These clustering patterns may reflect localized recombination events, mutational hotspots, or regions under different selective pressures.
+
+![Figure 3: Regional Variant Cluster Analysis](./main/A1/Figures/fig3.png)
+*Figure 3. IGV view of a representative genomic region showing clustered variant positions. Multiple SNVs occur within a ~7kb window, suggesting either localized mutational processes or recombination events between closely related strains.*
+
+The uneven distribution of variants across the genome, with both sparse and dense regions, is characteristic of bacterial evolution where certain genomic regions experience higher mutation rates or different selective constraints. Core metabolic genes typically show lower variant density due to functional constraints, while accessory functions may tolerate higher variation.
+
+## Individual Variant Validation and Quality
+
+High-resolution inspection of individual variant positions confirmed the reliability of variant calls, with consistent read support and appropriate quality scores (Figure 4). The absence of detected indel variants suggests high structural conservation between strains at the nucleotide level, with sequence differences primarily arising through point mutations rather than insertion-deletion events.
+
+![Figure 4: Individual SNV Detail View](./main/A1/Figures/fig4.png)
+*Figure 4. Detailed IGV view of individual variant positions showing high-quality SNVs with consistent read support. The bottom track shows aligned contigs with individual nucleotides color-coded, demonstrating clear variant calls supported by multiple overlapping reads.*
+
+## Biological and Technical Implications
+
+### Assembly Performance
+The assembly quality metrics demonstrate that Oxford Nanopore long-read sequencing, combined with appropriate bioinformatics workflows, can achieve high-quality bacterial genome assemblies suitable for comparative genomics and functional studies. The N50 of 3.32 Mb indicates successful resolution of repetitive genomic regions that commonly fragment short-read assemblies, while the high coverage depth (159×) provided robust support for accurate consensus calling.
+
+### Genomic Diversity and Evolution
+The 1,058 identified SNVs provide insights into *Salmonella* strain diversity and evolution. The 0.021% sequence divergence falls within the typical range for intra-serovar variation and suggests these strains diverged relatively recently in evolutionary time. The absence of large structural variants indicates that strain differences primarily result from accumulated point mutations rather than major genomic rearrangements or horizontal gene transfer events.
+
+The additional genomic content (0.15 Mb beyond the reference genome) likely represents strain-specific elements such as prophages, genomic islands, or plasmids that may confer phenotypic differences including antimicrobial resistance, virulence factors, or metabolic capabilities.
+
+### Methodological Considerations
+The workflow successfully demonstrated the integration of long-read sequencing, genome assembly, and comparative genomics approaches for bacterial pathogen characterization. The bcftools variant calling approach proved sufficient for detecting major sequence differences, while the IGV visualization enabled validation of variant calls and assessment of regional variation patterns.
+
+Future analyses could benefit from functional annotation of variant effects, characterization of the additional genomic content not present in the reference, and phenotypic correlation studies to understand the biological significance of observed genomic differences.
+
+## Conclusions
+
+This study successfully assembled a high-quality *Salmonella enterica* genome using Oxford Nanopore sequencing and identified 1,058 strain-specific variants relative to the LT2 reference. The assembly quality exceeded standard benchmarks and provides a foundation for downstream comparative and functional genomics studies. The observed genomic variation patterns are consistent with typical bacterial evolution and suggest this strain contains both core genomic elements conserved across *Salmonella* and strain-specific content that may influence phenotype.
+
+The methodology demonstrates the effectiveness of current long-read sequencing and assembly approaches for bacterial genomics, achieving chromosome-level contiguity while maintaining sensitivity for single-nucleotide variant detection. These results contribute to our understanding of *Salmonella* genomic diversity and provide a framework for future comparative genomics studies in bacterial pathogens.
 
 
 
