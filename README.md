@@ -124,7 +124,7 @@ Computational resources included an Ubuntu 22.04 virtual machine allocated 8 GB 
 
 The *Salmonella enterica* genome assembly achieved exceptional quality across all major performance indicators (Figure 1). The total assembly length of 5.10 Mb slightly exceeded the 4.95 Mb reference genome, indicating successful capture of strain-specific genomic content. The N50 of 3.32 Mb substantially surpassed the >1 Mb benchmark for high-quality bacterial assemblies, demonstrating excellent contiguity that approaches chromosome-level assembly.
 
-![Figure 1: Assembly Quality Comparison](./main/A1/Figures/fig1.png)
+![Figure 1: Assembly Quality Comparison](A1/Figures/fig1.png)
 *Figure 1. Assembly quality metrics comparison showing observed values versus expected benchmarks. The assembly exceeded expectations in coverage depth (159× vs 50× expected) and achieved excellent contiguity (N50 = 3.32 Mb), while maintaining appropriate genome length and contig number.*
 
 The mean coverage of 159× far exceeded the 50× expected threshold, providing robust support for accurate consensus calling and reliable variant detection. The presence of three contigs aligns with expectations for bacterial genomes, likely representing the main chromosome plus accessory genetic elements such as plasmids or genomic islands.
@@ -133,7 +133,7 @@ The mean coverage of 159× far exceeded the 50× expected threshold, providing r
 
 Visual inspection of the genome alignment revealed comprehensive coverage across the *Salmonella* reference chromosome with variants distributed throughout the genome (Figure 2). The alignment achieved a 96% mapping rate, indicating high structural similarity between the assembled strain and the LT2 reference genome.
 
-![Figure 2: Genome-wide Alignment Overview](./main/A1/Figures/fig2.png)
+![Figure 2: Genome-wide Alignment Overview](A1/Figures/fig2.png)
 *Figure 2. IGV visualization showing genome-wide alignment of the assembled contigs (bottom track) against the reference genome, with variant positions (blue bars, top track) and coverage depth (middle track, cyan). Variants are distributed across the entire chromosome length.*
 
 Variant calling identified 1,058 single nucleotide variants (SNVs) with no insertion-deletion variants detected, representing a sequence divergence of approximately 0.021% from the reference strain. This level of variation is consistent with intra-serovar differences within *Salmonella enterica* and suggests these strains share recent evolutionary history while having accumulated strain-specific mutations.
@@ -142,7 +142,7 @@ Variant calling identified 1,058 single nucleotide variants (SNVs) with no inser
 
 Detailed examination of variant distribution revealed both isolated SNVs and regional clusters containing multiple variants within short genomic intervals (Figure 3). These clustering patterns may reflect localized recombination events, mutational hotspots, or regions under different selective pressures.
 
-![Figure 3: Regional Variant Cluster Analysis](./main/A1/Figures/fig3.png)
+![Figure 3: Regional Variant Cluster Analysis](A1/Figures/fig3.png)
 *Figure 3. IGV view of a representative genomic region showing clustered variant positions. Multiple SNVs occur within a ~7kb window, suggesting either localized mutational processes or recombination events between closely related strains.*
 
 The uneven distribution of variants across the genome, with both sparse and dense regions, is characteristic of bacterial evolution where certain genomic regions experience higher mutation rates or different selective constraints. Core metabolic genes typically show lower variant density due to functional constraints, while accessory functions may tolerate higher variation.
@@ -151,7 +151,7 @@ The uneven distribution of variants across the genome, with both sparse and dens
 
 High-resolution inspection of individual variant positions confirmed the reliability of variant calls, with consistent read support and appropriate quality scores (Figure 4). The absence of detected indel variants suggests high structural conservation between strains at the nucleotide level, with sequence differences primarily arising through point mutations rather than insertion-deletion events.
 
-![Figure 4: Individual SNV Detail View](./main/A1/Figures/fig4.png)
+![Figure 4: Individual SNV Detail View](A1/Figures/fig4.png)
 *Figure 4. Detailed IGV view of individual variant positions showing high-quality SNVs with consistent read support. The bottom track shows aligned contigs with individual nucleotides color-coded, demonstrating clear variant calls supported by multiple overlapping reads.*
 
 ## Biological and Technical Implications
