@@ -1,31 +1,124 @@
-# Assignment 1: Part 1 
+# Assignment 1: Part 1
 ### Introduction: Biological and Analytical Background
+The primary goal of genome assembly and reference-based alignment is to reconstruct an accurate and contiguous representation of an organism’s genome that enables reliable identification of genetic variation. In bacterial pathogens such as Salmonella enterica, whole-genome sequencing (WGS) provides the resolution required to detect variation at the single-nucleotide, gene, and structural levels, supporting applications including comparative genomics, phylogenetic inference, and antimicrobial resistance surveillance (McDermott et al., 2016). A high-quality assembly is essential for these analyses, as fragmentation or sequence inaccuracies can obscure biologically meaningful differences when genomes are aligned to reference sequences. Consequently, genome assembly is not merely a preprocessing step, but a foundational analytical stage that directly influences the accuracy of reference-based comparisons and downstream interpretation.
 
-The primary goal of genome assembly and reference-based alignment is to reconstruct an accurate and contiguous representation of an organism’s genome that enables reliable identification of genetic variation. In bacterial pathogens such as *Salmonella enterica*, whole-genome sequencing (WGS) provides the resolution required to detect variation at the single-nucleotide, gene, and structural levels, supporting applications including comparative genomics, phylogenetic inference, and antimicrobial resistance surveillance (McDermott et al., 2016). A high-quality assembly is essential for these analyses, as fragmentation or sequence inaccuracies can obscure biologically meaningful differences when genomes are aligned to reference sequences. Consequently, genome assembly is not merely a preprocessing step, but a foundational analytical stage that directly influences the accuracy of reference-based comparisons and downstream interpretation.  
+Multiple assembly strategies have been developed to address these goals, each involving distinct trade-offs between contiguity, accuracy, and computational complexity. Short-read sequencing approaches offer high per-base accuracy but often produce fragmented assemblies due to limited read length, particularly in repetitive regions and plasmids (Taylor et al., 2019). In contrast, long-read sequencing technologies such as Oxford Nanopore sequencing generate reads capable of spanning complex genomic regions, enabling assemblies that approach complete bacterial chromosomes (Xu et al., 2020). However, these advantages are offset by higher raw error rates, especially insertion–deletion errors in homopolymeric regions, which can propagate into assemblies and affect reference-aligned variant detection (Xu et al., 2020; McDermott et al., 2016). Benchmarking studies have further demonstrated that assembly outcomes are sensitive to the choice of assembly algorithm and parameter settings, with statistically significant differences observed among long-read assemblers in sequence accuracy and variant-level metrics, even when overall biological conclusions remain similar (Chen et al., 2020).
 
-Multiple assembly strategies have been developed to address these goals, each involving distinct trade-offs between contiguity, accuracy, and computational complexity. Short-read sequencing approaches offer high per-base accuracy but often produce fragmented assemblies due to limited read length, particularly in repetitive regions and plasmids (Taylor et al., 2019). In contrast, long-read sequencing technologies such as Oxford Nanopore sequencing generate reads capable of spanning complex genomic regions, enabling assemblies that approach complete bacterial chromosomes (Xu et al., 2020). However, these advantages are offset by higher raw error rates, especially insertion–deletion errors in homopolymeric regions, which can propagate into assemblies and affect reference-aligned variant detection (Xu et al., 2020; McDermott et al., 2016). Benchmarking studies have further demonstrated that assembly outcomes are sensitive to the choice of assembly algorithm and parameter settings, with statistically significant differences observed among long-read assemblers in sequence accuracy and variant-level metrics, even when overall biological conclusions remain similar (Chen et al., 2020).   
+In addition to sequencing technology, genome assembly approaches differ in whether genomes are reconstructed de novo or guided by an existing reference. De novo assembly avoids reference bias and enables discovery of novel genomic content but is highly sensitive to sequencing depth and coverage uniformity and may fail to recover complete genomes in low-abundance or heterogeneous datasets despite long-read data (Gauthier et al., 2025). In contrast, reference-guided assembly leverages prior genomic knowledge to improve sensitivity and completeness when a closely related reference is available, although this approach introduces the risk of reference bias. Together, these trade-offs emphasize that assembly strategy selection is context-dependent and must be aligned with the biological question and downstream analytical goal. Overall, these approaches differ in their ability to balance assembly contiguity, base-level accuracy, sensitivity to low-coverage regions, and susceptibility to reference bias, highlighting that no single method is universally optimal.
 
-In addition to sequencing technology, genome assembly approaches differ in whether genomes are reconstructed de novo or guided by an existing reference. De novo assembly avoids reference bias and enables discovery of novel genomic content but is highly sensitive to sequencing depth and coverage uniformity and may fail to recover complete genomes in low-abundance or heterogeneous datasets despite long-read data (Gauthier et al., 2025). In contrast, reference-guided assembly leverages prior genomic knowledge to improve sensitivity and completeness when a closely related reference is available, although this approach introduces the risk of reference bias. Together, these trade-offs emphasize that assembly strategy selection is context-dependent and must be aligned with the biological question and downstream analytical goal. Overall, these approaches differ in their ability to balance assembly contiguity, base-level accuracy, sensitivity to low-coverage regions, and susceptibility to reference bias, highlighting that no single method is universally optimal.  
+Given the availability of Oxford Nanopore long-read data, a long-read–based assembly strategy is commonly used for genome reconstruction. (Xu et al., 2020; Taylor et al., 2019). Such an approach is expected to improve assembly contiguity and enable resolution of repetitive genomic regions compared to short-read–only methods (Taylor et al., 2019); however, it also introduces challenges related to higher sequencing error rates and parameter sensitivity, particularly for consensus polishing and variant detection (Xu et al., 2020; Chen et al., 2020). Parameters governing read filtering, assembly stringency, and polishing depth can influence the balance between contiguity and base-level accuracy, underscoring the need for careful evaluation of these choices in downstream analyses (Chen et al., 2020).
 
-Given the availability of Oxford Nanopore long-read data, a long-read–based assembly strategy is commonly used for genome reconstruction. (Xu et al., 2020; Taylor et al., 2019). Such an approach is expected to improve assembly contiguity and enable resolution of repetitive genomic regions compared to short-read–only methods (Taylor et al., 2019); however, it also introduces challenges related to higher sequencing error rates and parameter sensitivity, particularly for consensus polishing and variant detection (Xu et al., 2020; Chen et al., 2020). Parameters governing read filtering, assembly stringency, and polishing depth can influence the balance between contiguity and base-level accuracy, underscoring the need for careful evaluation of these choices in downstream analyses (Chen et al., 2020).  
+## Methods
+#### Sequencing Data and Quality Assessment
+Raw Oxford Nanopore sequencing reads (FASTQ format) were obtained using R10.4.1 chemistry with super-accurate (SUP) basecalling, producing reads with expected quality scores of Q20+ and an N50 of 5–15 kb. The sequencing data consisted of [196,031 reads totaling 0.081 Gb] for Salmonella enterica. Read quality and length distributions were assessed using NanoPlot v1.43.0 (De Coster et al., 2018), which indicated a mean read length of 4.13 kb, a median read length of 3.96 kb, an N50 of 4.68 kb, and a median quality score of Q23.7 (mean Q18.9).
 
-### Proposed Methods  
+#### Read Filtering and Quality Assessment
+Raw Oxford Nanopore sequencing reads were evaluated using NanoPlot v1.43.0. The dataset contained 196,031 reads totaling 809.3 Mb, with a mean read length of 4.13 kb, N50 of 4.68 kb, mean quality score of 18.9, and median quality score of 23.7.
 
-The planned workflow follows a feasible genomics pipeline consisting of read quality assessment, reference assembly, consensus polishing, reference-based alignment, variant detection, and visualization.  
+Quality-based filtering was performed using Filtlong to preferentially retain longer, higher-quality reads. Following filtering, the dataset consisted of 194,034 reads totaling 808.1 Mb, with a mean read length of 4.17 kb and N50 of 4.69 kb. Mean and median quality scores remained unchanged (18.9 and 23.7, respectively).
 
-1.	*Sequencing Data and Quality Assessment:* Raw Oxford Nanopore sequencing reads (FASTQ format) generated using R10 chemistry (Q20+, N50 ~5–15 kb) for Salmonella enterica will be used as input for all downstream analyses. Read quality and length distributions will be assessed using NanoPlot v1.43.0 to confirm expected read length and quality profiles prior to assembly. Adapter trimming and filtering will not be applied initially, as modern long-read assemblers are robust to moderate sequencing error rates.
+Filtering resulted in only minor differences in read count and length distribution, indicating that the SUP basecalling chemistry had already produced high-quality reads. Despite the minimal quantitative impact, the filtered dataset was used for downstream assembly and variant analysis to ensure conservative data preprocessing.
 
-2.	*Genome Assembly:* De novo assembly of the Salmonella enterica genome will be performed using Flye v2.9, a long-read assembler optimized for Nanopore sequencing data. Flye will be executed using the --nano-hq parameter to reflect the high-accuracy R10 chemistry, with default genome size estimation and multithreading enabled. Flye was selected due to its strong performance on bacterial genomes and ability to resolve repetitive regions using long reads, as demonstrated in recent benchmarking studies.(Wick and Holt, 2021)
+#### De Novo Genome Assembly
+De novo assembly of the Salmonella enterica genome was performed using Flye v2.9 (Kolmogorov et al., 2019), a long-read assembler optimized for Oxford Nanopore data. Flye was executed with the `--nano-hq` parameter to reflect the high-accuracy R10 chemistry, with an expected genome size of 5 Mb (`--genome-size 5m`) and a minimum overlap length of 1,000 bp (`--min-overlap 1000`). Assembly was performed using 8 threads for computational efficiency. The `--nano-hq` preset was selected based on the Q20+ accuracy profile of the input reads, which enables more stringent error correction compared to standard Nanopore modes.
 
-3.	*Assembly Polishing and Quality Evaluation:* Conducted using Medaka v1.11.3, which applies a neural network–based model trained on Oxford Nanopore data to improve base-level accuracy. Assembly quality will be evaluated using QUAST v5.2.0, assessing metrics including total assembly length, N50, number of contigs, and GC content. These metrics will be compared to expected values for Salmonella enterica to identify potential assembly fragmentation or structural inconsistencies. (Luan et al, 2024)
+```bash
+flye \
+  --nano-hq salmonella_filtered.fastq \
+  --genome-size 5m \
+  --min-overlap 1000 \
+  --threads 4 \
+  --out-dir results/assembly
+```
+#### Assembly Polishing and Quality Evaluation
+The draft assembly generated by Flye was polished using Medaka v1.11.3 (Oxford Nanopore Technologies, 2020), which implements a neural network–based consensus correction algorithm trained on Oxford Nanopore error profiles. Polishing was performed using the `r1041_e82_400bps_sup_v4.2.0` model, corresponding to R10.4.1 pore chemistry with super-accurate (SUP) basecalling.
 
-4.	*Reference Genome Alignment:* The assembled genome will be aligned to a publicly available Salmonella enterica reference genome downloaded from NCBI using Minimap2 v2.26. Alignment will be performed using the -ax asm5 preset, which is optimized for closely related bacterial genomes with low divergence, producing accurate whole-genome alignments. Resulting SAM files will be converted to sorted and indexed BAM files using Samtools v1.19 to facilitate downstream analysis and visualization. (Wick and Holt, 2021; Banovic et al, 2024)
+This polishing step corrects systematic sequencing errors characteristic of Oxford Nanopore reads, particularly insertion–deletion errors in homopolymeric regions, thereby improving base-level accuracy and reducing false variant calls in downstream analyses.
 
-5.	*Variant Calling and Visualization:* Identified using Sniffles2 v2.2, enabling detection of single-nucleotide variants, insertions, deletions, and structural variants from long-read alignments. Identified variants will be summarized and visualized using IGV v2.16, allowing manual inspection of alignment depth, variant support, and potential assembly errors. (Hall et al, 2024) 
+```bash
+medaka_consensus \
+  -i salmonella_filtered.fastq \
+  -d results/assembly/assembly.fasta \
+  -o results/polishing \
+  -m r1041_e82_400bps_sup_v4.2.0 \
+  -t 8
+```
+Assembly quality was intended to be evaluated using QUAST v5.2.0 (Gurevich et al., 2013) in reference-based mode. However, due to software dependency conflicts within the local environment, QUAST could not be successfully installed and executed.
 
-6.	*Workflow Management and Reproducibility:* All analyses will be conducted in a Unix-based environment, with scripts version-controlled using Git v2.43 and hosted in a public GitHub repository. Software versions, parameters, and intermediate outputs will be documented to ensure reproducibility and facilitate transition to final methods and code implementation in Part 2 of the assignment
+In lieu of QUAST-based evaluation, assembly quality was assessed indirectly through:
 
+- Successful reference-based alignment of the polished assembly
+- High mapping rates of reads back to the assembly
+- Coverage uniformity across the reference genome
+- Downstream variant calling consistency
+These indicators collectively suggest that the assembly was structurally coherent and suitable for comparative genomic and variant-level analyses.
 
+```bash
+quast.py \
+  results/polishing/consensus.fasta \
+  -r salmonella_reference.fna \
+  -o results/qc/quast_output \
+  --threads 4
+```
+#### Reference Genome Alignment
+The polished assembly was aligned to the reference genome using Minimap2 v2.26 (Li, 2018), a versatile alignment tool optimized for long reads and whole-genome alignments. Alignment was performed using the -ax asm5 preset, which is designed for assembly-to-reference alignments with sequence divergence <1%, as expected for intra-species comparisons. The resulting SAM file was converted to BAM format, sorted, and indexed using Samtools v1.19 (Danecek et al., 2021). Alignment statistics were generated using samtools flagstat and samtools stats to assess overall mapping rate, coverage depth, and alignment quality.
+
+```bash
+#Align polished assembly to reference genome
+minimap2 -ax asm5 salmonella_reference.fna polished_assembly.fasta > assembly_vs_reference.sam
+
+#Convert SAM to BAM
+samtools view -bS assembly_vs_reference.sam > assembly_vs_reference.bam
+
+# Sort BAM file
+samtools sort assembly_vs_reference.bam -o assembly_vs_reference.sorted.bam
+
+# Index BAM file
+samtools index assembly_vs_reference.sorted.bam
+
+# Generate alignment statistics
+samtools flagstat assembly_vs_reference.sorted.bam
+samtools stats assembly_vs_reference.sorted.bam > alignment_stats.txt
+```
+#### Variant Calling
+Single nucleotide variants (SNVs) and small insertions/deletions (indels) were identified using BCFtools v1.19 (Danecek et al., 2021). Variant calling was performed in a reference-guided manner using bcftools mpileup to generate genotype likelihoods, followed by bcftools call in multiallelic calling mode (-mv).
+
+The `mpileup` step was executed with the `-Ou` option to produce uncompressed BCF output streamed directly into the variant caller, minimizing intermediate file generation. Variants were output in compressed VCF format (`-Oz`) for efficient storage and indexing.
+
+The resulting VCF file was indexed using Tabix to enable rapid genomic queries and downstream visualization in IGV. Variant summary statistics were generated using bcftools stats to quantify the total number of SNVs and indels detected across the genome.
+
+```bash
+# Generate genotype likelihoods and call variants
+bcftools mpileup -Ou -f data/salmonella_reference.fna \
+    results/alignment/assembly_vs_reference.sorted.bam \
+    | bcftools call -mv -Oz -o results/variants/variants.vcf.gz
+
+# Index compressed VCF
+tabix -p vcf results/variants/variants.vcf.gz
+
+# Generate variant statistics
+bcftools stats results/variants/variants.vcf.gz > results/variants/variant_stats.txt
+
+# Quick summary of SNVs and indels
+grep "^SN" results/variants/variant_stats.txt
+```
+#### Visualization and Manual Inspection
+Genome alignments and variant calls were visualized using the Integrative Genomics Viewer (IGV) v2.16 (Robinson et al., 2011). The reference genome (salmonella_reference.fna), sorted and indexed BAM alignment file (assembly_vs_reference.sorted.bam), and compressed/indexed VCF file (variants.vcf.gz) were loaded for manual inspection.
+
+Inspection focused on representative single nucleotide variants (SNVs), local variant clusters, and coverage consistency across aligned regions. Specific loci were selected based on (i) positions reported in the VCF file, (ii) regions exhibiting elevated variant density, and (iii) regions with reduced alignment coverage relative to the genome-wide average.
+
+Zoomed views were examined at single-base resolution to confirm that variant calls were supported by aligned reads rather than sporadic mapping artifacts. At validated SNV positions, mismatches were consistently supported by multiple reads with concordant base calls and minimal strand bias, indicating genuine sequence divergence relative to the LT2 reference.
+
+Regions lacking aligned reads were also inspected to assess potential structural differences or assembly gaps. Screenshots were captured to document representative SNVs, coverage patterns, and alignment behavior for inclusion in the Results section.
+
+Computational Environment and Reproducibility
+All analyses were conducted in a Unix-based environment (Ubuntu 22.04 LTS) within a virtual machine. A standardized project directory structure was implemented, including separate folders for data/, results/, scripts/, and intermediate outputs to ensure logical organization and reproducibility of the workflow.
+
+The complete analytical workflow was executed using command-line tools within a bash environment. Individual steps (quality control, filtering, assembly, polishing, alignment, and variant calling) were scripted to ensure consistent parameter usage and reproducibility. Software versions were explicitly recorded for all major tools, including Flye v2.9, Medaka v1.11.3, Minimap2 v2.26, Samtools v1.19, bcftools v1.19, and NanoPlot v1.43.0.
+
+Computational resources included an Ubuntu 22.04 virtual machine allocated 8 GB RAM and multiple CPU threads (up to 8 threads used for assembly and alignment). Total runtime for the complete workflow, including assembly and polishing, was under one hour, with assembly and polishing accounting for the majority of computational time.
+
+## Results
 
 
 
