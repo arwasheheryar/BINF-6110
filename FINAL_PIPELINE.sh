@@ -481,7 +481,6 @@ This pipeline successfully demonstrates:
 - Comprehensive variant analysis
 - Professional bioinformatics workflow
 
-Excellent work! Your assembly quality is impressive! 🌟
 ================================================================================
 EOF
 
